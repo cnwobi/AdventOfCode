@@ -1,15 +1,9 @@
 package com.company.day2;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class Solution {
@@ -41,12 +35,11 @@ public class Solution {
         boolean indexOutBounds = lowerBound - 1 >= password.length() || upperBound - 1 >= password.length();
         boolean exactlyOneCharacterEqualsTarget = charAtLowerBoundEqualsTarget ^ charAtUpperBoundEqualsTarget;
         return !indexOutBounds && exactlyOneCharacterEqualsTarget;
-
     }
 
-    public static long countValidPasswords (String inputPath) {
+    public static long countValidPasswords2(String inputPath) {
         URL path = Solution.class.getResource(inputPath);
-        long validPasswords = 0;
+        long validPasswords;
         try(Stream<String> inputStream = Files.lines(Path.of(path.getFile()))){
             validPasswords = inputStream
                     .filter(Solution::isValid2)
@@ -58,31 +51,23 @@ public class Solution {
         }
         return validPasswords;
     }
+
+    public static long countValidPasswords(String inputPath) {
+        URL path = Solution.class.getResource(inputPath);
+        long validPasswords;
+        try(Stream<String> inputStream = Files.lines(Path.of(path.getFile()))){
+            validPasswords = inputStream
+                    .filter(Solution::isValid)
+                    .count();
+        }
+        catch (IOException e) {
+            throw new RuntimeException("An error occurred while reading the input file");
+        }
+        return validPasswords;
+    }
+
     public static void main(String[] args) {
         System.out.println(countValidPasswords("input.txt"));
-        Set<String> validSet =  new HashSet<>(Arrays.asList("byr",
-                "iyr",
-                "eyr",
-                "hgt",
-                "hcl",
-                "ecl",
-                "pid",
-                "cid"));
-        Set<String> holder =  new HashSet<>(Arrays.asList(
-                "hcl",
-                "iyr",
-                "hgt",
-                "byr",
-                "pid",
-                "eyr",
-                "cid",
-                "ecl"));
-        //System.out.println(validSet2.remove("cid"));
-       System.out.println(validSet.containsAll(holder));
-
-       String toParse = "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd";
-
-
-                Set<String> key = new HashSet<>(Arrays.asList(toParse.split("\\b(:[\\w#]+)\\b")));
+        System.out.println(countValidPasswords2("input.txt"));
     }
 }
